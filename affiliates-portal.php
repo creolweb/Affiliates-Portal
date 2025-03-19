@@ -13,3 +13,10 @@
 if (!defined('WPINC')) {
     die;
 }
+
+require_once plugin_dir_path( __FILE__ ) . 'affiliates-rest-controller.php';
+
+add_action( 'rest_api_init', function() {
+    $controller = new Affiliates_REST_Controller();
+    $controller->register_routes();
+} );
