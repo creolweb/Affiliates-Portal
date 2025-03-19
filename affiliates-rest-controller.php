@@ -1,3 +1,5 @@
+<?php
+
 class Affiliates_REST_Controller extends WP_REST_Controller {
     public function __construct() {
         $this->namespace = 'affiliates/v1';
