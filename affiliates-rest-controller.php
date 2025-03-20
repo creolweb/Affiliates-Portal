@@ -115,7 +115,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
             update_post_meta( $job_id, 'contact', sanitize_text_field( $request['contact'] ) );
         }
 
-        return rest_ensure_response( array( 'id' => $job_id ) );
+        return rest_ensure_response( array( 'id' => $job_id, 'title' => $request['title'] ) );
     }
 
     public function get_jobs_permissions_check( $request ) {
