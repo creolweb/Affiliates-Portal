@@ -12,14 +12,14 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
         register_rest_route( $this->namespace, '/jobs', array(
             'methods' => WP_REST_Server::READABLE,
             'callback' => array( $this, 'get_jobs' ),
-            'permission_callback' => 'get_jobs_permissions_check',
+            'permission_callback' => array( $this, 'get_jobs_permissions_check'),
         ) );
 
         // This endpoint is for creating a new job
         register_rest_route( $this->namespace, '/jobs', array(
             'methods' => WP_REST_Server::CREATABLE,
             'callback' => array( $this, 'create_job' ),
-            'permission_callback' => 'create_job_permissions_check',
+            'permission_callback' => array( $this, 'create_job_permissions_check'),
         ) );
         
         // This endpoint is for getting a specific job by ID
