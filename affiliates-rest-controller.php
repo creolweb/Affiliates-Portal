@@ -47,7 +47,9 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
     // Callback function to get all jobs
     public function get_jobs( $request ) {
         $args = array(
-            'post_type' => 'job',
+            'post_type'   => 'job',
+            'post_status' => 'any',
+            'numberposts' => -1,
         );
 
         $jobs = get_posts( $args );
