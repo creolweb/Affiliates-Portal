@@ -16,6 +16,7 @@ if (!defined('WPINC')) {
 
 require_once plugin_dir_path( __FILE__ ) . 'affiliates-cpt.php';
 require_once plugin_dir_path( __FILE__ ) . 'affiliates-rest-controller.php';
+require_once plugin_dir_path( __FILE__ ) . 'affiliates-shortcode.php';
 
 add_action( 'rest_api_init', function() {
     $controller = new Affiliates_REST_Controller();
