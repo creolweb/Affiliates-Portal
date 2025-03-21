@@ -5,7 +5,7 @@
  * This widget fetches jobs via the REST API and displays them.
  */
 
-function affiliates_portal_widget_shortcode() {
+function affiliates_list_jobs_widget() {
     ob_start();
     ?>
     <div id="affiliates-portal-widget">
@@ -30,4 +30,4 @@ function affiliates_portal_widget_shortcode() {
     <?php
     return ob_get_clean();
 }
-add_shortcode('affiliates_portal_widget', 'affiliates_portal_widget_shortcode');
+add_shortcode('affiliates_portal_list_jobs', 'affiliates_list_jobs_widget');
