@@ -6,14 +6,23 @@
  */
 function affiliates_list_jobs_widget( $atts ) {
     $atts = shortcode_atts( array(
+        'self'      => '',
         'companies' => '',
     ), $atts, 'affiliates_portal_list_jobs' );
 
     // Prepare the REST API URL:
     $base_url = esc_url( rest_url( 'affiliates/v1/jobs' ) );
-    $query = '';
+    $query    = '';
 
-    if ( ! empty( $atts['companies'] ) ) {
+    if ( filter_var( $atts['self'], FILTER_VALIDATE_BOOLEAN ) ) {
+        $user_id = get_current_user_id();
+        if ( $user_id ) {
+            $query = '?user_ids=' . urlencode( $user_id );
+        } else {
+            // User not logged in, return no jobs for safety accordingly:
+            $query = '?user_ids=0';
+        }
+    } elseif ( ! empty( $atts['companies'] ) ) {
         // Remove spaces and ensure proper query format
         $companies = preg_replace( '/\s+/', '', $atts['companies'] );
         $query = '?user_ids=' . urlencode( $companies );
