@@ -14,7 +14,7 @@ function affiliates_portal_widget_shortcode() {
     </div>
     <script>
     document.addEventListener('DOMContentLoaded', function() {
-        fetch('<?php echo esc_url( rest_url( 'affiliates/v1/jobs' ) ); ?>')
+        fetch('<?php echo esc_url( rest_url( 'affiliates/v1/jobs' ) ); ?>', { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
                 const jobList = document.getElementById('affiliates-job-list');
