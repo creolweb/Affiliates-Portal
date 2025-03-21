@@ -121,7 +121,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
     }
 
     public function get_jobs_permissions_check( $request ) {
-        return current_user_can( 'read' );
+        return true;
     }
 
     public function create_job_permissions_check( $request ) {
