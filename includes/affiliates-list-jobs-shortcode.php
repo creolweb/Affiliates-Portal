@@ -1,56 +1,50 @@
 <?php
 /**
- * Shortcode to display the Affiliates Widget.
+ * Shortcode to display a list of jobs in the affiliates portal
  *
- * This widget fetches jobs via the REST API and displays them optionally filtered by user IDs
+ * This widget fetches jobs via the REST API and displays them, optionally filtered by user IDs.
+ * When the "self" attribute is true, each job will get Edit and Delete buttons.
  */
-function affiliates_list_jobs_widget( $atts ) {
-    $atts = shortcode_atts( array(
-        'self'      => '',
-        'companies' => '',
-    ), $atts, 'affiliates_portal_list_jobs' );
-
-    // Prepare the REST API URL:
-    $base_url = esc_url( rest_url( 'affiliates/v1/jobs' ) );
-    $query    = '';
-
-    if ( filter_var( $atts['self'], FILTER_VALIDATE_BOOLEAN ) ) {
-        $user_id = get_current_user_id();
-        if ( $user_id ) {
-            $query = '?user_ids=' . urlencode( $user_id );
-        } else {
-            // User not logged in, return no jobs for safety accordingly:
-            $query = '?user_ids=0';
-        }
-    } elseif ( ! empty( $atts['companies'] ) ) {
-        // Remove spaces and ensure proper query format
-        $companies = preg_replace( '/\s+/', '', $atts['companies'] );
-        $query = '?user_ids=' . urlencode( $companies );
+class Affiliates_List_Jobs_Shortcode {
+    public function __construct() {
+        add_shortcode( 'affiliates_portal_list_jobs', [ $this, 'render_jobs_list' ] );
+        add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_assets' ] );
     }
 
-    $rest_url = $base_url . $query;
-    ob_start();
-    ?>
-    <div id="affiliates-portal-widget">
-        <h3>Job Listings</h3>
-        <ul id="affiliates-job-list"></ul>
-    </div>
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        fetch('<?php echo $rest_url; ?>', { cache: 'no-store' })
-            .then(response => response.json())
-            .then(data => {
-                const jobList = document.getElementById('affiliates-job-list');
-                data.forEach(function(job) {
-                    const li = document.createElement('li');
-                    li.textContent = job.title + ' by ' + job.author.name;
-                    jobList.appendChild(li);
-                });
-            })
-            .catch(error => console.error('Error fetching jobs:', error));
-    });
-    </script>
-    <?php
-    return ob_get_clean();
+    public function enqueue_assets() {
+        // Register and enqueue the JavaScript file
+        wp_register_script(
+            'affiliates-list-jobs',
+            plugins_url( '../assets/js/affiliates-list-jobs.js', __FILE__ ),
+            [],
+            '1.0.0',
+            true
+        );
+
+        // Pass the REST API URL to the JavaScript file
+        $base_url = rest_url( 'affiliates/v1/jobs' );
+        wp_localize_script( 'affiliates-list-jobs', 'affiliatesJobs', [
+            'restUrl' => esc_url( $base_url ),
+            'currentUserId' => get_current_user_id(),
+        ] );
+        wp_enqueue_script( 'affiliates-list-jobs' );
+    }
+
+    public function render_jobs_list( $atts ) {
+        // Get shortcode attributes; for example, [affiliates_portal_list_jobs self="true"]
+        // Use the data-is-self attribute to determine if the current user is the one viewing the jobs
+        // Default to false if not set
+        $atts = shortcode_atts( [ 'self' => false ], $atts, 'affiliates_portal_list_jobs' );
+        $is_self = filter_var($atts['self'], FILTER_VALIDATE_BOOLEAN);
+        ob_start();
+        ?>
+        <div id="affiliates-portal-widget" data-is-self="<?php echo ($is_self ? '1' : '0'); ?>">
+            <h3>Job Listings</h3>
+            <ul id="affiliates-job-list"></ul>
+        </div>
+        <?php
+        return ob_get_clean();
+    }
 }
-add_shortcode('affiliates_portal_list_jobs', 'affiliates_list_jobs_widget');
+
+new Affiliates_List_Jobs_Shortcode();
