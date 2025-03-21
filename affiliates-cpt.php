@@ -18,22 +18,6 @@ function register_custom_post_types() {
         'labels' => $labels,
         'public' => true,
         'show_in_rest' => true, // This enables support for the WordPress REST API
-        /**
-         * Specifies the features supported by a custom post type.
-         * 
-         * Valid entries for the 'supports' array include:
-         * - 'title'          : Enables the title field for the post type.
-         * - 'editor'         : Enables the content editor for the post type.
-         * - 'author'         : Enables the author selection for the post type.
-         * - 'thumbnail'      : Enables featured image support for the post type.
-         * - 'excerpt'        : Enables the excerpt field for the post type.
-         * - 'trackbacks'     : Enables trackbacks for the post type.
-         * - 'custom-fields'  : Enables custom fields for the post type.
-         * - 'comments'       : Enables comments for the post type.
-         * - 'revisions'      : Enables revisions for the post type.
-         * - 'page-attributes': Enables page attributes like menu order for hierarchical post types.
-         * - 'post-formats'   : Enables post formats for the post type.
-         */
         'supports' => array( 'title', 'editor', 'author', 'custom-fields' ),
         'has_archive' => true,
     );
