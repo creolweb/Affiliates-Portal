@@ -8,11 +8,18 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
     // Register the custom routes for the REST API
     public function register_routes() {
 
-        // This endpoint is for getting all jobs
+        // This endpoint is for getting all jobs using user IDs as a filter
         register_rest_route( $this->namespace, '/jobs', array(
-            'methods' => WP_REST_Server::READABLE,
-            'callback' => array( $this, 'get_jobs' ),
-            'permission_callback' => array( $this, 'get_jobs_permissions_check'),
+            'methods'             => WP_REST_Server::READABLE,
+            'callback'            => array( $this, 'get_jobs' ),
+            'permission_callback' => array( $this, 'get_jobs_permissions_check' ),
+            'args' => array(
+                'user_ids' => array(
+                    'description' => 'One or more user IDs, comma-separated or array.',
+                    'type'        => 'mixed', // Accept either string or array
+                    'sanitize_callback' => null,
+                ),
+            ),
         ) );
 
         // This endpoint is for creating a new job
@@ -42,43 +49,57 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
             'callback' => array( $this, 'delete_job' ),
             'permission_callback' => array( $this, 'delete_job_permissions_check' ),
         ) );
-
-        // This endpoint is for getting all jobs by user ID
-        register_rest_route( $this->namespace, '/jobs/user/(?P<user_id>\d+)', array(
-            'methods' => WP_REST_Server::READABLE,
-            'callback' => array( $this, 'get_jobs_by_user' ),
-            'permission_callback' => array( $this, 'get_jobs_permissions_check'),
-        ) );
     }
 
-    // Callback function to get all jobs
+    // Callback function to get all jobs using user IDs as a filter
+    // Valid user_ids can be passed as a comma-separated string or an array
+    // Eg: /api/affiliates/v1/jobs?user_ids=1,2,3 or /api/affiliates/v1/jobs?user_ids[]=1&user_ids[]=2&user_ids[]=3
     public function get_jobs( $request ) {
+        $user_ids_param = $request->get_param( 'user_ids' );
+    
+        $user_ids = [];
+    
+        if ( is_array( $user_ids_param ) ) {
+            $user_ids = array_map( 'intval', $user_ids_param );
+        } elseif ( is_string( $user_ids_param ) ) {
+            $user_ids = array_map( 'intval', explode( ',', $user_ids_param ) );
+        } elseif ( is_numeric( $user_ids_param ) ) {
+            $user_ids = [ intval( $user_ids_param ) ];
+        }
+    
         $args = array(
             'post_type'   => 'job',
-            'post_status' => 'any',
+            'post_status' => 'publish',
             'numberposts' => -1,
         );
-
+    
+        if ( ! empty( $user_ids ) ) {
+            $args['author__in'] = $user_ids;
+        }
+    
         $jobs = get_posts( $args );
-
-        if ( empty( $jobs ) ) {
-            return rest_ensure_response( array() );
-        }
-
-        $data = array();
-
-        foreach ( $jobs as $job ) {
-            $data[] = array(
-                'id'      => $job->ID,
-                'title'   => $job->post_title,
-                'author'  => get_the_author_meta( 'display_name', $job->post_author ),
-                'job_description' => $job->post_content,
-                'contact' => get_post_meta( $job->ID, 'contact', true ),
-            );
-        }
-
+    
+        $data = array_map( function ( $job ) {
+            $author_id = $job->post_author;
+            $author = get_user_by( 'id', $author_id );
+    
+            return [
+                'id'       => $job->ID,
+                'title'    => $job->post_title,
+                'content'  => $job->post_content,
+                'author'   => [
+                    'id'   => $author_id,
+                    'name' => $author->display_name,
+                    // Optional: include custom user meta
+                    // 'company_slug' => get_user_meta( $author_id, 'company_slug', true ),
+                    // 'company_logo' => get_user_meta( $author_id, 'company_logo', true ),
+                ],
+            ];
+        }, $jobs );
+    
         return rest_ensure_response( $data );
-    }
+    }    
+
 
     // Callback function to create a new job
     public function create_job( $request ) {
@@ -198,38 +219,6 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
         }
 
         return rest_ensure_response( array( 'deleted' => true ) );
-    }
-
-    // Callback function to get all jobs by user ID
-    public function get_jobs_by_user( $request ) {
-        $user_id = $request['user_id'];
-
-        $args = array(
-            'post_type'   => 'job',
-            'post_status' => 'any',
-            'author'      => $user_id,
-            'numberposts' => -1,
-        );
-
-        $jobs = get_posts( $args );
-
-        if ( empty( $jobs ) ) {
-            return rest_ensure_response( array() );
-        }
-
-        $data = array();
-
-        foreach ( $jobs as $job ) {
-            $data[] = array(
-                'id'      => $job->ID,
-                'title'   => $job->post_title,
-                'author'  => get_the_author_meta( 'display_name', $job->post_author ),
-                'job_description' => $job->post_content,
-                'contact' => get_post_meta( $job->ID, 'contact', true ),
-            );
-        }
-
-        return rest_ensure_response( $data );
     }
 
     // Permission checks for each endpoint
