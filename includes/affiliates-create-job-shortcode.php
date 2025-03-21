@@ -31,7 +31,7 @@ function affiliates_create_job_widget() {
         const formData = new FormData(this);
         const data = {
             title: formData.get('title'),
-            description: formData.get('description'),
+            job_description: formData.get('description'),
             contact: formData.get('contact')
         };
 
@@ -46,6 +46,7 @@ function affiliates_create_job_widget() {
         .then(response => response.json())
         .then(data => {
             document.getElementById('job-response').textContent = 'Job created successfully!';
+            console.log('Success:', data);
         })
         .catch(error => {
             document.getElementById('job-response').textContent = 'Error creating job.';
