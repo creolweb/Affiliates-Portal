@@ -14,9 +14,9 @@ if (!defined('WPINC')) {
     die;
 }
 
-require_once plugin_dir_path( __FILE__ ) . 'affiliates-cpt.php';
-require_once plugin_dir_path( __FILE__ ) . 'affiliates-rest-controller.php';
-require_once plugin_dir_path( __FILE__ ) . 'affiliates-shortcode.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/affiliates-cpt.php';
+require_once plugin_dir_path( __FILE__ ) . 'api/affiliates-rest-controller.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/affiliates-shortcode.php';
 
 add_action( 'rest_api_init', function() {
     $controller = new Affiliates_REST_Controller();

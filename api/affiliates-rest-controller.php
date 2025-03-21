@@ -75,7 +75,6 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
 
     // Callback function to create a new job
     public function create_job( $request ) {
-        // Required fields
         $required_fields = array( 'title', 'job_description', 'contact' );
         $missing_fields = array();
 
@@ -100,7 +99,6 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
 
         $job_data = array(
             'post_title'   => sanitize_text_field( $request['title'] ),
-            // Use "job_description" field from the request
             'post_content' => sanitize_textarea_field( $request['job_description'] ),
             'post_type'    => 'job',
             'post_status'  => 'publish',
@@ -114,6 +112,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
         }
 
         // Save the contact information as a custom field
+        // Follow similar patterns for additional custom fields as needed
         if ( ! empty( $request['contact'] ) ) {
             update_post_meta( $job_id, 'contact', sanitize_text_field( $request['contact'] ) );
         }
@@ -194,6 +193,8 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
         return rest_ensure_response( array( 'deleted' => true ) );
     }
 
+
+    // Permission checks for each endpoint
     public function get_jobs_permissions_check( $request ) {
         return true;
     }

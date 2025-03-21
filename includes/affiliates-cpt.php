@@ -1,5 +1,6 @@
 <?php
 
+// Function to register custom post types such as the "Job" CPT
 function register_custom_post_types() {
 
     /**
