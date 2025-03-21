@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         return;
     }
     const isSelf = widget.getAttribute('data-is-self') === '1';
-    const restUrl = affiliatesJobs.restUrl + (isSelf ? '?user_ids=' + encodeURIComponent( affiliatesJobs.currentUserId ) : '');
+    const restUrl = affiliatesJobs.restUrl + (isSelf ? '?user_ids=' + encodeURIComponent(affiliatesJobs.currentUserId) : '');
 
     fetch(restUrl, { cache: 'no-store' })
         .then(response => response.json())
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const jobList = document.getElementById('affiliates-job-list');
             data.forEach(function(job) {
                 const li = document.createElement('li');
-                li.textContent = job.title + ' by ' + job.author;
+                li.textContent = job.title + ' by ' + job.author.name;
                 if (isSelf) {
                     const editBtn = document.createElement('button');
                     editBtn.textContent = 'Edit';
