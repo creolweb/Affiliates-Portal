@@ -79,15 +79,19 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
     
         $jobs = get_posts( $args );
     
-        $data = array_map( function ( $job ) {
+        if ( empty( $jobs ) ) {
+            return rest_ensure_response( array( 'message' => 'No jobs found' ) );
+        }
+    
+        $data = array_map( function( $job ) {
             $author_id = $job->post_author;
             $author = get_user_by( 'id', $author_id );
     
             return [
-                'id'       => $job->ID,
-                'title'    => $job->post_title,
-                'content'  => $job->post_content,
-                'author'   => [
+                'id'      => $job->ID,
+                'title'   => $job->post_title,
+                'content' => $job->post_content,
+                'author'  => [
                     'id'   => $author_id,
                     'name' => $author->display_name,
                     // Optional: include custom user meta
@@ -98,7 +102,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
         }, $jobs );
     
         return rest_ensure_response( $data );
-    }    
+    }
 
 
     // Callback function to create a new job
@@ -123,7 +127,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
         }
 
         // Use current user id if no author is provided
-        $author_id = ! empty( $request['author'] ) ? intval( $request['author'] ) : get_current_user_id();
+        $author_id = ! empty( $request['author_id'] ) ? intval( $request['author_id'] ) : get_current_user_id();
 
         $job_data = array(
             'post_title'   => sanitize_text_field( $request['title'] ),
@@ -218,7 +222,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
             return new WP_Error( 'cant-delete', __( 'Cannot delete job', 'affiliates-portal' ), array( 'status' => 500 ) );
         }
 
-        return rest_ensure_response( array( 'deleted' => true ) );
+        return rest_ensure_response( array( 'deleted' => true , 'message' => 'Deleted job of id ' . $request['id']) );
     }
 
     // Permission checks for each endpoint
