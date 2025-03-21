@@ -42,6 +42,13 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
             'callback' => array( $this, 'delete_job' ),
             'permission_callback' => array( $this, 'delete_job_permissions_check' ),
         ) );
+
+        // This endpoint is for getting all jobs by user ID
+        register_rest_route( $this->namespace, '/jobs/user/(?P<user_id>\d+)', array(
+            'methods' => WP_REST_Server::READABLE,
+            'callback' => array( $this, 'get_jobs_by_user' ),
+            'permission_callback' => array( $this, 'get_jobs_permissions_check'),
+        ) );
     }
 
     // Callback function to get all jobs
@@ -193,6 +200,37 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
         return rest_ensure_response( array( 'deleted' => true ) );
     }
 
+    // Callback function to get all jobs by user ID
+    public function get_jobs_by_user( $request ) {
+        $user_id = $request['user_id'];
+
+        $args = array(
+            'post_type'   => 'job',
+            'post_status' => 'any',
+            'author'      => $user_id,
+            'numberposts' => -1,
+        );
+
+        $jobs = get_posts( $args );
+
+        if ( empty( $jobs ) ) {
+            return rest_ensure_response( array() );
+        }
+
+        $data = array();
+
+        foreach ( $jobs as $job ) {
+            $data[] = array(
+                'id'      => $job->ID,
+                'title'   => $job->post_title,
+                'author'  => get_the_author_meta( 'display_name', $job->post_author ),
+                'job_description' => $job->post_content,
+                'contact' => get_post_meta( $job->ID, 'contact', true ),
+            );
+        }
+
+        return rest_ensure_response( $data );
+    }
 
     // Permission checks for each endpoint
     public function get_jobs_permissions_check( $request ) {
