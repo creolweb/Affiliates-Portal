@@ -26,9 +26,9 @@ function affiliates_portal_login_shortcode( $atts ) {
         // Map company names to their usernames.
         // In a real site this mapping can be stored in the DB.
         $company_users = array(
-            'Company A' => 'company_a_user',
-            'Company B' => 'company_b_user',
-            'Company C' => 'company_c_user',
+            'Company A' => 'companya',
+            'Company B' => 'companyb',
+            'Company C' => 'companyc',
         );
 
         if ( empty( $company ) || ! isset( $company_users[ $company ] ) ) {
