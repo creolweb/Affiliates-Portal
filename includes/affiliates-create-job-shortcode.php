@@ -41,7 +41,7 @@ function affiliates_create_job_widget() {
                 'Content-Type': 'application/json',
                 'X-WP-Nonce': '<?php echo wp_create_nonce( 'wp_rest' ); ?>'
             },
-            credentials: 'same-origin', // Ensure cookies are sent with the request
+            credentials: 'include', // Ensure cookies are sent with the request
             body: JSON.stringify(data)
         })
         .then(response => response.json())
