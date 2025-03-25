@@ -39,3 +39,11 @@ add_action( 'admin_init', function() {
         exit;
     }
 });
+
+add_filter( 'wp_nav_menu_items', 'add_logout_link_to_menu', 10, 2 );
+function add_logout_link_to_menu( $items, $args ) {
+    if ( is_user_logged_in() ) {
+        $items .= '<li><a href="' . wp_logout_url( "https://creol.ucf.edu" ) . '">Logout</a></li>';
+    }
+    return $items;
+}
