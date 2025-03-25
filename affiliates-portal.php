@@ -41,7 +41,7 @@ add_action( 'admin_init', function() {
 });
 
 add_action( 'init', function() {
-    if ( isset($_GET['custom_logout']) ) {
+    if ( isset($_GET['custom-logout']) ) {
         wp_logout();
         wp_safe_redirect( 'https://creol.ucf.edu' ); // Redirect to desired location
         exit;
