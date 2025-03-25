@@ -40,3 +40,16 @@ add_action( 'admin_init', function() {
         exit;
     }
 });
+
+add_action( 'template_redirect', 'affiliates_custom_logout', 1 );
+function affiliates_custom_logout() {
+    if ( isset( $_GET['custom-logout'] ) && '1' === $_GET['custom-logout'] ) {
+        if ( is_user_logged_in() ) {
+            // Log the user out.
+            wp_logout();
+        }
+        // Redirect to creol.ucf.edu.
+        wp_safe_redirect( 'https://creol.ucf.edu' );
+        exit;
+    }
+}
