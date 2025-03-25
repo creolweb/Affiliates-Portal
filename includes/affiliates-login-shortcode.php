@@ -7,24 +7,17 @@
  * prevents login for disallowed roles (e.g. SSO subscribers), and redirects appropriately.
  */
 
-function affiliates_portal_login_shortcode( $atts ) {
-    // If already logged in, redirect (adjust destination as needed)
-    if ( is_user_logged_in() ) {
-        wp_safe_redirect( home_url() );
-        exit;
-    }
-
-    ob_start();
-
-    // Process form submission.
-    if ( isset( $_POST['affiliates_login_nonce'] ) && 
-         wp_verify_nonce( $_POST['affiliates_login_nonce'], 'affiliates_portal_login' ) ) {
+/**
+ * Process login on the init hook to ensure authentication cookies
+ * are set before any output is sent.
+ */
+function affiliates_process_login() {
+    if ( isset( $_POST['affiliates_login_nonce'] ) && wp_verify_nonce( $_POST['affiliates_login_nonce'], 'affiliates_portal_login' ) ) {
 
         $company  = sanitize_text_field( $_POST['affiliates_company'] );
-        $password = $_POST['affiliates_password']; // Do not trim/password-sanitize here so that wp_signon() can check it exactly.
+        $password = $_POST['affiliates_password']; // Let wp_signon() do its own password checking.
 
         // Map company names to their usernames.
-        // In a real site this mapping can be stored in the DB.
         $company_users = array(
             'Company A' => 'companya',
             'Company B' => 'companyb',
@@ -32,36 +25,51 @@ function affiliates_portal_login_shortcode( $atts ) {
         );
 
         if ( empty( $company ) || ! isset( $company_users[ $company ] ) ) {
-            echo '<div class="error">Invalid company selected.</div>';
-        } else {
-            // Get the user by login.
-            $user = get_user_by( 'login', $company_users[ $company ] );
+            wp_safe_redirect( add_query_arg( 'login_error', 'invalid_company', home_url() ) );
+            exit;
+        }
 
-            // Prevent login for non‑affiliate users (for example, SSO subscribers).
-            if ( $user && in_array( 'sso_subscriber', (array) $user->roles, true ) ) {
-                echo '<div class="error">Login not allowed for this account.</div>';
+        $user = get_user_by( 'login', $company_users[ $company ] );
+
+        // Prevent login for disallowed roles (e.g. SSO subscribers)
+        if ( $user && in_array( 'sso_subscriber', (array) $user->roles, true ) ) {
+            wp_safe_redirect( add_query_arg( 'login_error', 'disallowed_role', home_url() ) );
+            exit;
+        } else {
+            $creds = array(
+                'user_login'    => $company_users[ $company ],
+                'user_password' => $password,
+                'remember'      => true,
+            );
+            $user = wp_signon( $creds, false );
+            if ( is_wp_error( $user ) ) {
+                wp_safe_redirect( add_query_arg( 'login_error', urlencode( $user->get_error_message() ), home_url() ) );
+                exit;
             } else {
-                $creds = array(
-                    'user_login'    => $company_users[ $company ],
-                    'user_password' => $password,
-                    'remember'      => true,
-                );
-                $user = wp_signon( $creds, false );
-                if ( is_wp_error( $user ) ) {
-                    echo '<div class="error">Login failed: ' . esc_html( $user->get_error_message() ) . '</div>';
-                } else {
-                    // Explicitly set current user & auth cookies to ensure both the auth and logged_in cookies are set.
-                    wp_set_current_user( $user->ID );
-                    wp_set_auth_cookie( $user->ID, true );
-                    do_action( 'wp_login', $user->user_login, $user );
-                    wp_safe_redirect( home_url() );
-                    exit;
-                }
+                // Explicitly set current user & auth cookies to ensure both the auth and logged_in cookies are set.
+                wp_set_current_user( $user->ID );
+                wp_set_auth_cookie( $user->ID, true );
+                do_action( 'wp_login', $user->user_login, $user );
+                wp_safe_redirect( home_url() );
+                exit;
             }
         }
     }
-    ?>
+}
+add_action( 'init', 'affiliates_process_login', 1 );
 
+/**
+ * Shortcode callback: displays the login form.
+ */
+function affiliates_portal_login_shortcode( $atts ) {
+    // If already logged in, redirect.
+    if ( is_user_logged_in() ) {
+        wp_safe_redirect( home_url() );
+        exit;
+    }
+
+    ob_start();
+    ?>
     <form method="post">
         <label for="affiliates_company">Company:</label>
         <select name="affiliates_company" id="affiliates_company" required>
@@ -77,7 +85,6 @@ function affiliates_portal_login_shortcode( $atts ) {
         <?php wp_nonce_field( 'affiliates_portal_login', 'affiliates_login_nonce' ); ?>
         <input type="submit" value="Login"/>
     </form>
-
     <?php
     return ob_get_clean();
 }
