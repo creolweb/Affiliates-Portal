@@ -63,3 +63,9 @@ function affiliates_custom_manual_logout() {
         exit;
     }
 }
+
+add_action('wp_logout', 'custom_logout_redirect');
+function custom_logout_redirect() {
+    wp_redirect('https://creol.ucf.edu'); // Change to your desired logout URL
+    exit();
+}
