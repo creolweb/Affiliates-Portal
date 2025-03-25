@@ -4,6 +4,7 @@ function custom_logout_button() {
         wp_clear_auth_cookie();
         wp_destroy_current_session();
         wp_set_current_user( 0 );
+        do_action( 'wp_logout' );
     }
     $logout_url = 'https://creol.ucf.edu';
     return '<a href="' . esc_url($logout_url) . '" class="btn btn-primary">Logout</a>';
