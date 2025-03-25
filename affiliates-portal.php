@@ -40,14 +40,6 @@ add_action( 'admin_init', function() {
     }
 });
 
-add_action( 'init', function() {
-    if ( isset($_GET['custom-logout']) ) {
-        wp_logout();
-        wp_safe_redirect( 'https://creol.ucf.edu' ); // Redirect to desired location
-        exit;
-    }
-});
-
 add_filter( 'wp_nav_menu_items', 'add_logout_link_to_menu', 10, 2 );
 function add_logout_link_to_menu( $items, $args ) {
     if ( is_user_logged_in() ) {
@@ -56,4 +48,16 @@ function add_logout_link_to_menu( $items, $args ) {
         $items .= $logout_link;
     }
     return $items;
+}
+
+// Custom logout function
+add_action( 'template_redirect', 'affiliates_custom_logout', 1 );
+function affiliates_custom_logout() {
+    if ( isset( $_GET['custom-logout'] ) ) {
+        if ( is_user_logged_in() ) {
+            wp_logout();
+        }
+        wp_safe_redirect( 'https://creol.ucf.edu' ); // Change to your desired landing page
+        exit;
+    }
 }
