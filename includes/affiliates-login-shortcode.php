@@ -25,7 +25,6 @@ function affiliates_process_login() {
         );
 
         if ( empty( $company ) || ! isset( $company_users[ $company ] ) ) {
-            // Redirect back with an error flag (could also add a message via query var)
             wp_safe_redirect( add_query_arg( 'login_error', 'invalid_company', home_url() ) );
             exit;
         }
@@ -47,6 +46,10 @@ function affiliates_process_login() {
                 wp_safe_redirect( add_query_arg( 'login_error', urlencode( $user->get_error_message() ), home_url() ) );
                 exit;
             } else {
+                // Explicitly set current user & auth cookies to ensure both the auth and logged_in cookies are set.
+                wp_set_current_user( $user->ID );
+                wp_set_auth_cookie( $user->ID, true );
+                do_action( 'wp_login', $user->user_login, $user );
                 wp_safe_redirect( home_url() );
                 exit;
             }
@@ -73,6 +76,7 @@ function affiliates_portal_login_shortcode( $atts ) {
             <option value="">Select a Company</option>
             <option value="Company A">Company A</option>
             <option value="Company B">Company B</option>
+            <option value="Company C">Company C</option>
         </select>
         <br/>
         <label for="affiliates_password">Password:</label>
