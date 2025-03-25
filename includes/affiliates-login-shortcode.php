@@ -31,28 +31,22 @@ function affiliates_process_login() {
 
         $user = get_user_by( 'login', $company_users[ $company ] );
 
-        // Prevent login for disallowed roles (e.g. SSO subscribers)
-        if ( $user && in_array( 'sso_subscriber', (array) $user->roles, true ) ) {
-            wp_safe_redirect( add_query_arg( 'login_error', 'disallowed_role', home_url() ) );
+        $creds = array(
+            'user_login'    => $company_users[ $company ],
+            'user_password' => $password,
+            'remember'      => true,
+        );
+        $user = wp_signon( $creds, false );
+        if ( is_wp_error( $user ) ) {
+            wp_safe_redirect( add_query_arg( 'login_error', urlencode( $user->get_error_message() ), home_url() ) );
             exit;
         } else {
-            $creds = array(
-                'user_login'    => $company_users[ $company ],
-                'user_password' => $password,
-                'remember'      => true,
-            );
-            $user = wp_signon( $creds, false );
-            if ( is_wp_error( $user ) ) {
-                wp_safe_redirect( add_query_arg( 'login_error', urlencode( $user->get_error_message() ), home_url() ) );
-                exit;
-            } else {
-                // Explicitly set current user & auth cookies to ensure both the auth and logged_in cookies are set.
-                wp_set_current_user( $user->ID );
-                wp_set_auth_cookie( $user->ID, true );
-                do_action( 'wp_login', $user->user_login, $user );
-                wp_safe_redirect( home_url() );
-                exit;
-            }
+            // Explicitly set current user & auth cookies to ensure both the auth and logged_in cookies are set.
+            wp_set_current_user( $user->ID );
+            wp_set_auth_cookie( $user->ID, true );
+            do_action( 'wp_login', $user->user_login, $user );
+            wp_safe_redirect( home_url() );
+            exit;
         }
     }
 }
