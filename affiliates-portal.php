@@ -58,7 +58,6 @@ function affiliates_custom_logout() {
             // Clear auth cookies and reset the current user.
             wp_clear_auth_cookie();
             wp_set_current_user( 0 );
-            do_action( 'wp_logout' );
         }
         wp_safe_redirect( 'https://creol.ucf.edu' );
         exit;
