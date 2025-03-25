@@ -43,7 +43,17 @@ add_action( 'admin_init', function() {
 add_filter( 'wp_nav_menu_items', 'add_logout_link_to_menu', 10, 2 );
 function add_logout_link_to_menu( $items, $args ) {
     if ( is_user_logged_in() ) {
-        $items .= '<li><a href="' . wp_logout_url( "https://creol.ucf.edu" ) . '">Logout</a></li>';
+        $logout_url = home_url( '/custom-logout' ); // Redirects through a custom logout route
+        $logout_link = '<li class="menu-item"><a href="' . esc_url( $logout_url ) . '">Logout</a></li>';
+        $items .= $logout_link;
     }
     return $items;
 }
+
+add_action( 'init', function() {
+    if ( isset($_GET['custom_logout']) ) {
+        wp_logout();
+        wp_safe_redirect( 'https://creol.ucf.edu' ); // Redirect to desired location
+        exit;
+    }
+});
