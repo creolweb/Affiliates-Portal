@@ -51,14 +51,16 @@ function add_logout_link_to_menu( $items, $args ) {
     return $items;
 }
 
-// Custom logout function via template_redirect.
 add_action( 'template_redirect', 'affiliates_custom_logout', 1 );
 function affiliates_custom_logout() {
     if ( isset( $_GET['custom-logout'] ) && '1' === $_GET['custom-logout'] ) {
         if ( is_user_logged_in() ) {
-            wp_logout();
+            // Clear auth cookies and reset the current user.
+            wp_clear_auth_cookie();
+            wp_set_current_user( 0 );
+            do_action( 'wp_logout' );
         }
-        wp_safe_redirect( 'https://creol.ucf.edu' ); // Redirect to your desired landing page.
+        wp_safe_redirect( 'https://creol.ucf.edu' );
         exit;
     }
 }
