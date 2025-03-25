@@ -41,29 +41,6 @@ add_action( 'admin_init', function() {
     }
 });
 
-add_action( 'template_redirect', 'affiliates_custom_manual_logout', 1 );
-function affiliates_custom_manual_logout() {
-    if ( isset( $_GET['custom-logout'] ) && '1' === $_GET['custom-logout'] ) {
-        if ( is_user_logged_in() ) {
-            // Expire the WordPress authentication cookies manually.
-            $expire = time() - 3600;
-            if ( defined('AUTH_COOKIE') ) {
-                setcookie( AUTH_COOKIE, '', $expire, COOKIEPATH, COOKIE_DOMAIN );
-            }
-            if ( defined('SECURE_AUTH_COOKIE') ) {
-                setcookie( SECURE_AUTH_COOKIE, '', $expire, COOKIEPATH, COOKIE_DOMAIN );
-            }
-            if ( defined('LOGGED_IN_COOKIE') ) {
-                setcookie( LOGGED_IN_COOKIE, '', $expire, COOKIEPATH, COOKIE_DOMAIN );
-            }
-            wp_set_current_user( 0 );
-            do_action( 'wp_logout' ); // Fire any other logout hooks.
-        }
-        wp_safe_redirect( 'https://creol.ucf.edu' );
-        exit;
-    }
-}
-
 add_action('wp_logout', 'custom_logout_redirect');
 function custom_logout_redirect() {
     wp_redirect('https://creol.ucf.edu'); // Change to your desired logout URL
