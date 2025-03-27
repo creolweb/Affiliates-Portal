@@ -40,7 +40,8 @@ add_action( 'admin_init', function() {
     }
 });
 
-add_action('init', 'register_my_menus');
-function register_my_menus() { 
-    register_nav_menu('affiliates-menu', __('Affiliates Menu')); 
-} 
+add_action('wp_logout', 'custom_logout_redirect');
+function custom_logout_redirect() {
+    wp_redirect('/portal-login'); // Change to your desired logout URL
+    exit();
+}
