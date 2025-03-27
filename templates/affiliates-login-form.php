@@ -21,4 +21,4 @@
     <?php wp_nonce_field( 'affiliates_portal_login', 'affiliates_login_nonce' ); ?>
     <input type="submit" value="Login"/>
 </form>
-<p><a href="creol.ucf.edu">Back to CREOL</a></p>
+<p class="mt-1"><a href="https://creol.ucf.edu">Back to CREOL</a></p>
