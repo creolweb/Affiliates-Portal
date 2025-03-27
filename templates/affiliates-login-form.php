@@ -1,6 +1,7 @@
 <?php if ( ! empty( $error ) ) : ?>
     <div class="error"><?php echo esc_html( $error ); ?></div>
 <?php endif; ?>
+<h3>IA Portal Login</h3>
 <form method="post">
     <label for="affiliate_login">Company:</label>
     <select name="affiliate_login" id="affiliate_login" required>
@@ -20,3 +21,4 @@
     <?php wp_nonce_field( 'affiliates_portal_login', 'affiliates_login_nonce' ); ?>
     <input type="submit" value="Login"/>
 </form>
+<p><a href="creol.ucf.edu">Back to CREOL</a></p>
