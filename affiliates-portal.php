@@ -17,7 +17,6 @@ if (!defined('WPINC')) {
 require_once plugin_dir_path( __FILE__ ) . 'includes/affiliates-cpt.php';
 require_once plugin_dir_path( __FILE__ ) . 'api/affiliates-rest-controller.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/affiliates-login-shortcode.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/affiliates-logout-shortcode.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/affiliates-list-jobs-shortcode.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/affiliates-create-job-shortcode.php';
 
