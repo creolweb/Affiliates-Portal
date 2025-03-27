@@ -1,5 +1,3 @@
-<?php
-// Displays a form for creating a job
 ?>
 <div id="affiliates-create-job-widget">
         <h3>Create a Job</h3>
