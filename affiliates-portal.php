@@ -42,6 +42,6 @@ add_action( 'admin_init', function() {
 
 add_action('wp_logout', 'custom_logout_redirect');
 function custom_logout_redirect() {
-    wp_redirect('/ia/portal-login'); // Change to your desired logout URL
+    wp_redirect(home_url('/portal-login')); // Change to your desired logout URL
     exit();
 }
