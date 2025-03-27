@@ -1,4 +1,3 @@
-?>
 <div id="affiliates-create-job-widget">
         <h3>Create a Job</h3>
         <form id="affiliates-create-job-form">
