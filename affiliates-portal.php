@@ -47,7 +47,7 @@ function custom_logout_redirect() {
 }
 
 function add_logout_link_to_menu( $items, $args ) {
-    if ( is_user_logged_in() && $args->theme_location === 'primary' ) { // Adjust as needed
+    if ( is_user_logged_in() && $args->theme_location === 'header-menu' ) { // Adjust as needed
         $logout_url = wp_logout_url();
         $items .= '<li class="menu-item"><a href="' . esc_url( $logout_url ) . '">Logout</a></li>';
     }
