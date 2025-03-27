@@ -46,3 +46,12 @@ function custom_logout_redirect() {
     wp_redirect('https://creol.ucf.edu'); // Change to your desired logout URL
     exit();
 }
+
+function add_logout_link_to_menu( $items, $args ) {
+    if ( is_user_logged_in() && $args->theme_location === 'primary' ) { // Adjust as needed
+        $logout_url = wp_logout_url();
+        $items .= '<li class="menu-item"><a href="' . esc_url( $logout_url ) . '">Logout</a></li>';
+    }
+    return $items;
+}
+add_filter( 'wp_nav_menu_items', 'add_logout_link_to_menu', 10, 2 );
