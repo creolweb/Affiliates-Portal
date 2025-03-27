@@ -2,28 +2,26 @@
 /**
  * Shortcode for a custom login page.
  * 
- * This shortcode outputs a custom login form with a dropdown for companies and a password input.
+ * This widget displays a custom login form with a dropdown for companies and a password input.
  * The dropdown is populated with display names of users with the custom role 'affiliate'.
  */
-
 function affiliates_portal_login_shortcode( $atts ) {
 
     // Redirect if already logged in.
-    if ( is_user_logged_in()  && ! isset( $_GET['loggedout']) ) {
+    if ( is_user_logged_in() && ! isset( $_GET['loggedout'] ) ) {
         if ( ! current_user_can( 'administrator' ) ) {
-        wp_safe_redirect( home_url() );
-        exit;
+            wp_safe_redirect( home_url() );
+            exit;
         }
     }
     
     $error = '';
-        
+    
     // Process the form submission using a nonce to verify and secure the request
-    if ( isset( $_POST['affiliates_login_nonce'] ) && 
-         wp_verify_nonce( $_POST['affiliates_login_nonce'], 'affiliates_portal_login' ) ) {
+    if ( isset( $_POST['affiliates_login_nonce'] ) && wp_verify_nonce( $_POST['affiliates_login_nonce'], 'affiliates_portal_login' ) ) {
         
         $affiliate_login = sanitize_text_field( $_POST['affiliate_login'] );
-        $password = $_POST['affiliates_password'];  // let wp_signon() handle password sanitization
+        $password = $_POST['affiliates_password']; // let wp_signon() handle password sanitization
         
         if ( empty( $affiliate_login ) ) {
             $error = 'Please select a company from the dropdown.';
@@ -52,39 +50,12 @@ function affiliates_portal_login_shortcode( $atts ) {
             }
         }
     }
-    ob_start();
-
-    // Display any error messages
-    if ( ! empty( $error ) ) {
-    echo '<div class="error">' . esc_html( $error ) . '</div>';
-    }
-
+    
     // Fetch all users with the 'affiliate' role.
     $affiliates = get_users( array( 'role' => 'affiliate' ) );
-    ?>
-    <form method="post">
-        <label for="affiliate_login">Company:</label>
-        <select name="affiliate_login" id="affiliate_login" required>
-            <option value="">Select a Company</option>
-            <?php
-            // Loop through each affiliate user.
-            if ( ! empty( $affiliates ) ) {
-                foreach ( $affiliates as $affiliate ) {
-                    echo '<option value="' . esc_attr( $affiliate->user_login ) . '">' . esc_html( $affiliate->display_name ) . '</option>';
-                }
-            }
-            ?>
-        </select>
-        <br/>
-        <label for="affiliates_password">Password:</label>
-        <input type="password" name="affiliates_password" id="affiliates_password" required/>
-        <br/>
-        <?php wp_nonce_field( 'affiliates_portal_login', 'affiliates_login_nonce' ); ?>
-        <input type="submit" value="Login"/>
-    </form>
-    <?php
-
+    
+    ob_start();
+    include plugin_dir_path( __FILE__ ) . '../templates/affiliates-login-form.php';
     return ob_get_clean();
-
 }
 add_shortcode( 'affiliates_portal_login', 'affiliates_portal_login_shortcode' );
