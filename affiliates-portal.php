@@ -40,8 +40,11 @@ add_action( 'admin_init', function() {
     }
 });
 
+// Redirect to the custom login page after logout.
+// WordPress appends a logged‐out query parameter so the login page can display an appropriate message rather than redirecting again.
+// If the parameter is not set, the user is redirected to the home page and cannot log back in.
 add_action('wp_logout', 'custom_logout_redirect');
 function custom_logout_redirect() {
-    wp_redirect(home_url('/portal-login')); // Change to your desired logout URL
+    wp_redirect(home_url('/portal-login?loggedout=1')); 
     exit();
 }

@@ -9,7 +9,7 @@
 function affiliates_portal_login_shortcode( $atts ) {
 
     // Redirect if already logged in.
-    if ( is_user_logged_in() ) {
+    if ( is_user_logged_in()  && ! isset( $_GET['loggedout']) ) {
         wp_safe_redirect( home_url() );
         exit;
     }
