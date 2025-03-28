@@ -18,7 +18,7 @@
                 <div class="col-md-12">
                     <label class="mb-2 w-100" for="affiliate_login">Company:</label>
                     <br/>
-                    <select class="mb-2 w-100" name="affiliate_login" id="affiliate_login" required>
+                    <select class="mb-2 w-100 custom-select" name="affiliate_login" id="affiliate_login" required>
                         <option value="">Select a Company</option>
                         <br/>
                         <?php if ( ! empty( $affiliates ) ) : ?>
@@ -33,7 +33,7 @@
                 <div class="col-md-12">
                     <label class="mb-2 w-100" for="affiliates_password">Password:</label>
                     <br/>
-                    <input class="mb-2 w-100" placeholder="Password" type="password" name="affiliates_password" id="affiliates_password" required/>
+                    <input class="mb-2 w-100 form-control" placeholder="Password" type="password" name="affiliates_password" id="affiliates_password" required/>
                 </div>
             </div>
             <div class="row">
