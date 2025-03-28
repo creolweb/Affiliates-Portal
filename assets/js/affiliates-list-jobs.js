@@ -6,35 +6,36 @@ document.addEventListener('DOMContentLoaded', function() {
     const isSelf = widget.getAttribute('data-is-self') === '1';
     const restUrl = affiliatesJobs.restUrl + (isSelf ? '?user_ids=' + encodeURIComponent(affiliatesJobs.currentUserId) : '');
 
+    const jobList = document.getElementById('affiliates-job-list');
+    const fragment = document.createDocumentFragment();
+
     fetch(restUrl, { cache: 'no-store' })
         .then(response => response.json())
         .then(data => {
-            const jobList = document.getElementById('affiliates-job-list');
             data.forEach(function(job) {
-                const li = document.createElement('li');
-                li.textContent = job.title + ' by ' + job.author.name;
-                if (isSelf) {
-                    const editBtn = document.createElement('button');
-                    editBtn.textContent = 'Edit';
-                    editBtn.classList.add('edit-button');
-                    editBtn.addEventListener('click', function() {
-                        console.log('Edit job', job.id);
-                    });
-                    
-                    const deleteBtn = document.createElement('button');
-                    deleteBtn.textContent = 'Delete';
-                    deleteBtn.classList.add('delete-button');
-                    deleteBtn.addEventListener('click', function() {
-                        console.log('Delete job', job.id);
-                    });
-                    
-                    li.appendChild(document.createTextNode(' '));
-                    li.appendChild(editBtn);
-                    li.appendChild(document.createTextNode(' '));
-                    li.appendChild(deleteBtn);
-                }
-                jobList.appendChild(li);
+                // Use template literals to generate card markup.
+                const cardHTML = `
+                    <div class="card mb-3">
+                        <div class="card-block">
+                            <h5 class="card-title">${job.title}</h5>
+                            <p class="card-text">By: ${job.author.name}</p>
+                            <p class="card-text">${job.content}</p>
+                            <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
+                            ${ isSelf ? `
+                                <button class="btn btn-primary edit-button" data-id="${job.id}">Edit</button>
+                                <button class="btn btn-danger delete-button" data-id="${job.id}">Delete</button>
+                            ` : '' }
+                        </div>
+                    </div>
+                `;
+                
+                // Create a temporary container to convert string to element.
+                const temp = document.createElement('div');
+                temp.innerHTML = cardHTML.trim();
+                fragment.appendChild(temp.firstElementChild);
             });
+            // Append all at once.
+            jobList.appendChild(fragment);
         })
         .catch(error => console.error('Error fetching jobs:', error));
 });
