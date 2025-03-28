@@ -91,6 +91,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
                 'id'      => $job->ID,
                 'title'   => $job->post_title,
                 'content' => $job->post_content,
+                'contact' => get_post_meta( $job->ID, 'contact', true ),
                 'author'  => [
                     'id'   => $author_id,
                     'name' => $author->display_name,
