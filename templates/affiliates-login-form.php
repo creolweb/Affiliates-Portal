@@ -8,15 +8,16 @@
         </div>
         <div class="col-md-12">
             <h1>CREOL, The College of Optics and Photonics</h1>
-            <p class="lead">Welcome to the CREOL Affiliates Portal. Please login to access your account.</p>
+            <p class="px-2">Welcome to the CREOL Affiliates Portal. Please login to access your account.</p>
         </div>
     </div>
     <form method="post">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <label for="affiliate_login">Company:</label>
                 <select name="affiliate_login" id="affiliate_login" required>
                     <option value="">Select a Company</option>
+                    <br/>
                     <?php if ( ! empty( $affiliates ) ) : ?>
                         <?php foreach ( $affiliates as $affiliate ) : ?>
                             <option value="<?php echo esc_attr( $affiliate->user_login ); ?>">
@@ -26,8 +27,9 @@
                     <?php endif; ?>
                 </select>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-12">
                 <label for="affiliates_password">Password:</label>
+                <br/>
                 <input placeholder="Password" type="password" name="affiliates_password" id="affiliates_password" required/>
             </div>
         </div>
@@ -38,9 +40,13 @@
         </div>
     </form>
     <div class="row">
-        <p>Having difficulties logging in? <strong><a href="emailto:creolweb@ucf.edu">Contact Us.</a></strong></p>
+        <div class="col-md-12">
+            <p>Having difficulties logging in? <a href="emailto:creolweb@ucf.edu">Contact Us.</a></p>
+        </div>
     </div>
     <div class="row">
-        <p><a href="https://creol.ucf.edu">Back to CREOL</a></p>
+        <div class="col-md-12">
+            <p><strong><a href="https://creol.ucf.edu">Back to CREOL</a></strong></p>
+        </div>
     </div>
 </div>
