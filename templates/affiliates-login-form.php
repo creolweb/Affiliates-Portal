@@ -39,7 +39,7 @@
             <div class="row">
                 <div class="col-md-12">
                     <?php wp_nonce_field( 'affiliates_portal_login', 'affiliates_login_nonce' ); ?>
-                    <input href="#" class="mb-2 w-100 btn btn-primary" type="submit" value="Login" class="btn btn-primary"/>
+                    <input class="mb-2 w-100 btn btn-primary" type="submit" value="Login" class="btn btn-primary"/>
                 </div>
             </div>
         </form>
