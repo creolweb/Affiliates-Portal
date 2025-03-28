@@ -1,15 +1,14 @@
 <div class="container w-50">
     <div class="row justify-content-center">
             <div class="col-md-12 ">
-                <div class="row">
+                <div class="row justify-content-center">
                     <img class="w-50" src="https://creol.ucf.edu/wp-content/uploads/sites/2/2024/10/CREOL-Logo-2024.png" alt="CREOL Logo" class="img-fluid"/>
                 </div>
             </div>
         </div>
         <div class="row justify-content-center">
             <div class="col-md-12 text-center">
-                <div class="row">
-                    <h3 class="my-4">CREOL, The College of Optics and Photonics</h1>
+                <div class="row justify-content-center">
                     <p class="w-75">Welcome to the CREOL Affiliates Portal. Please login to access your account.</p>
                 </div>
             </div>
@@ -46,12 +45,15 @@
         </form>
         <div class="row text-center">
             <div class="col-md-12">
-                <div class="row">
+                <div class="row justify-content-center">
                     <?php if ( ! empty( $error ) ) : ?>
                         <p class="text-danger">Your credentials are incorrect. Please try again.</p>
                         <?php
                         // Output the error message to the console for debugging.
                         echo '<script>console.error("' . esc_js( $error ) . '");</script>';
+
+                        // Clear the error message.
+                        $error = '';
                         ?>
                     <?php endif; ?>
                 </div>
