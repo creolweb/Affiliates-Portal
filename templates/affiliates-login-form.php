@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <img src="https://creol.ucf.edu/wp-content/uploads/2019/07/CREOL-Logo-1.png" alt="CREOL Logo" class="img-fluid"/>
+            <img src="<?php echo esc_url( get_template_directory_uri() . '/static/CREOL-Logo-2024.png' ); ?>" alt="CREOL Logo" class="img-fluid"/>
         </div>
         <div class="col-md-12">
             <h1>CREOL, The College of Optics and Photonics</h1>
