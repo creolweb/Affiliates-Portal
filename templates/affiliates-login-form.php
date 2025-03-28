@@ -4,11 +4,11 @@
 <div class="container">
     <div class="row">
         <div class="col-md-12">
-            <img src="https://creol.ucf.edu/wp-content/uploads/sites/2/2024/10/CREOL-Logo-2024.png" alt="CREOL Logo" class="img-fluid"/>
+            <img class="w-25" src="https://creol.ucf.edu/wp-content/uploads/sites/2/2024/10/CREOL-Logo-2024.png" alt="CREOL Logo" class="img-fluid"/>
         </div>
         <div class="col-md-12">
             <h1>CREOL, The College of Optics and Photonics</h1>
-            <p class="px-2">Welcome to the CREOL Affiliates Portal. Please login to access your account.</p>
+            <p class="w-50 text-center">Welcome to the CREOL Affiliates Portal. Please login to access your account.</p>
         </div>
     </div>
     <form method="post">
@@ -35,13 +35,14 @@
         </div>
         <div class="row">
             <div class="col-md-12">
+                <?php wp_nonce_field( 'affiliates_portal_login', 'affiliates_login_nonce' ); ?>
                 <input type="submit" value="Login" class="btn btn-primary"/>
             </div>
         </div>
     </form>
     <div class="row">
         <div class="col-md-12">
-            <p>Having difficulties logging in? <a href="emailto:creolweb@ucf.edu">Contact Us.</a></p>
+            <p>Having difficulties logging in? <a href="mailto:creolweb@ucf.edu">Contact Us.</a></p>
         </div>
     </div>
     <div class="row">
