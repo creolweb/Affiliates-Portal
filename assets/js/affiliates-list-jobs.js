@@ -13,13 +13,16 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(response => response.json())
         .then(data => {
             data.forEach(function(job) {
+                const maxChars = 150; // Maximum characters allowed
+                const truncatedContent = job.content.length > maxChars ? job.content.substring(0, maxChars) + '...' : job.content;
+                
                 // Use template literals to generate card markup.
                 const cardHTML = `
                     <div class="card mb-3">
                         <div class="card-block">
                             <h5 class="card-title">${job.title}</h5>
                             <p class="card-text">By: ${job.author.name}</p>
-                            <p class="card-text">${job.content}</p>
+                            <p class="card-text">${truncatedContent}</p>
                             <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
                             ${ isSelf ? `
                                 <button class="btn btn-primary edit-button" data-id="${job.id}">Edit</button>
