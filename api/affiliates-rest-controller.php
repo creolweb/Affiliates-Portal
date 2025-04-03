@@ -67,10 +67,14 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
             $user_ids = [ intval( $user_ids_param ) ];
         }
     
+        $per_page = isset( $request['per_page'] ) ? intval( $request['per_page'] ) : 5;
+        $page     = isset( $request['page'] ) ? max( 1, intval( $request['page'] ) ) : 1;
+
         $args = array(
-            'post_type'   => 'job',
-            'post_status' => 'publish',
-            'numberposts' => -1,
+            'post_type'      => 'job',
+            'post_status'    => 'publish',
+            'posts_per_page' => $per_page,
+            'offset'         => ( $page - 1 ) * $per_page,
         );
     
         if ( ! empty( $user_ids ) ) {

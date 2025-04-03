@@ -1,23 +1,26 @@
 document.addEventListener('DOMContentLoaded', function() {
     const widget = document.getElementById('affiliates-portal-widget');
-    if (!widget) {
-        return;
-    }
+    if (!widget) return;
     const isSelf = widget.getAttribute('data-is-self') === '1';
     const originalRestUrl = affiliatesJobs.restUrl + (isSelf ? '?user_ids=' + encodeURIComponent(affiliatesJobs.currentUserId) : '');
     const jobList = document.getElementById('affiliates-job-list');
+    let currentPage = 1;
+    const perPage = 5;
 
-    function buildUrl(url, key, value) {
-        return url + (url.indexOf('?') === -1 ? '?' : '&') + key + '=' + encodeURIComponent(value);
+    function buildUrl(url, params) {
+        const query = Object.keys(params)
+            .map(key => key + '=' + encodeURIComponent(params[key]))
+            .join('&');
+        return url + (url.indexOf('?') === -1 ? '?' : '&') + query;
     }
 
     function loadJobList() {
         jobList.innerHTML = '';
-        fetch(originalRestUrl, { cache: 'no-store' })
+        const urlWithPagination = buildUrl(originalRestUrl, { page: currentPage, per_page: perPage });
+        fetch(urlWithPagination, { cache: 'no-store' })
             .then(response => response.json())
             .then(data => {
                 const fragment = document.createDocumentFragment();
-
                 data.forEach(function(job) {
                     const maxChars = 300;
                     const truncatedContent = job.content.length > maxChars ? job.content.substring(0, maxChars) + '...' : job.content;
@@ -40,11 +43,49 @@ document.addEventListener('DOMContentLoaded', function() {
                     temp.innerHTML = cardHTML.trim();
                     fragment.appendChild(temp.firstElementChild);
                 });
-
                 jobList.appendChild(fragment);
+                renderPagination(data.length);
             })
             .catch(error => console.error('Error fetching jobs:', error));
     }
+
+    // Render pagination controls based on results. If we got 5 jobs, assume there might be a next page.
+    function renderPagination(resultsCount) {
+        // Remove any existing pagination controls
+        let paginationDiv = document.getElementById('pagination-controls');
+        if (paginationDiv) {
+            paginationDiv.remove();
+        }
+        paginationDiv = document.createElement('div');
+        paginationDiv.id = 'pagination-controls';
+        paginationDiv.className = 'mt-3';
+
+        if (currentPage > 1) {
+            const prevBtn = document.createElement('button');
+            prevBtn.className = 'btn btn-secondary mr-2';
+            prevBtn.textContent = 'Previous';
+            prevBtn.addEventListener('click', function() {
+                currentPage--;
+                loadJobList();
+            });
+            paginationDiv.appendChild(prevBtn);
+        }
+
+        // If number of results equals perPage, show Next button.
+        if (resultsCount === perPage) {
+            const nextBtn = document.createElement('button');
+            nextBtn.className = 'btn btn-secondary';
+            nextBtn.textContent = 'Next';
+            nextBtn.addEventListener('click', function() {
+                currentPage++;
+                loadJobList();
+            });
+            paginationDiv.appendChild(nextBtn);
+        }
+
+        jobList.parentNode.appendChild(paginationDiv);
+    }
+
 
     function fetchJobDetails(jobId) {
         const detailUrl = buildUrl(affiliatesJobs.restUrl, 'id', jobId);
