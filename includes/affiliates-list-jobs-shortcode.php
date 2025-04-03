@@ -19,6 +19,7 @@ function affiliates_list_jobs_enqueue_assets() {
     $base_url = rest_url( 'affiliates/v1/jobs' );
     wp_localize_script( 'affiliates-list-jobs', 'affiliatesJobs', [
         'restUrl'       => esc_url( $base_url ),
+        'nonce'   => wp_create_nonce( 'wp_rest' ),
         'currentUserId' => get_current_user_id(),
     ] );
     wp_enqueue_script( 'affiliates-list-jobs' );
