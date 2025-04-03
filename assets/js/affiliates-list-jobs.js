@@ -23,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const fragment = document.createDocumentFragment();
 
                 data.forEach(function(job) {
-                    const maxChars = 150; // Maximum characters allowed for listing
+                    const maxChars = 300; // Maximum characters allowed for listing
                     const truncatedContent = job.content.length > maxChars ? job.content.substring(0, maxChars) + '...' : job.content;
 
                     // Note: "More Details" button is always added.
@@ -34,7 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="card-text">By: ${job.author.name}</p>
                                 <p class="card-text">${truncatedContent}</p>
                                 <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
-                                <button class="btn btn-secondary more-details-button" data-id="${job.id}">More Details</button>
+                                <button href="#" class="btn btn-secondary more-details-button" data-id="${job.id}">More Details</button>
                                 ${ isSelf ? `
                                     <button class="btn btn-primary edit-button" data-id="${job.id}">Edit</button>
                                     <button class="btn btn-danger delete-button" data-id="${job.id}">Delete</button>
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="card-text">By: ${job.author.name}</p>
                             <p class="card-text">${job.content}</p>
                             <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
-                            <button class="btn btn-info back-button">Back</button>
+                            <button href="#" class="btn btn-info back-button">Back</button>
                         </div>
                     </div>
                 `;
