@@ -27,10 +27,17 @@ document.addEventListener('DOMContentLoaded', function() {
             responseElem.textContent = 'Job created successfully!';
             // Reset opacity in case it has been faded before
             responseElem.style.opacity = '1';
+
+            form.reset(); // Reset the form fields
+
             // Fade out after 3 seconds
             setTimeout(() => {
                 responseElem.style.transition = 'opacity 1s';
                 responseElem.style.opacity = '0';
+                // Clear the message after fading out
+                setTimeout(() => {
+                    responseElem.textContent = '';
+                }, 1000);
             }, 3000);
             
             // Notify job list to refresh
@@ -44,6 +51,9 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => {
                 responseElem.style.transition = 'opacity 1s';
                 responseElem.style.opacity = '0';
+                setTimeout(() => {
+                    responseElem.textContent = '';
+                }, 1000);
             }, 3000);
             console.error('Error:', error);
         });
