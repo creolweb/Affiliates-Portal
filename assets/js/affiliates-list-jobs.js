@@ -92,6 +92,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+    // When a new job is created, reload the jobs list
+    document.addEventListener('jobCreated', function() {
+        loadJobList();
+    });
+
     // Initial load.
     loadJobList();
 });

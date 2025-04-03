@@ -23,11 +23,28 @@ document.addEventListener('DOMContentLoaded', function() {
         })
         .then(response => response.json())
         .then(data => {
-            document.getElementById('job-response').textContent = 'Job created successfully!';
+            const responseElem = document.getElementById('job-response');
+            responseElem.textContent = 'Job created successfully!';
+            // Reset opacity in case it has been faded before
+            responseElem.style.opacity = '1';
+            // Fade out after 3 seconds
+            setTimeout(() => {
+                responseElem.style.transition = 'opacity 1s';
+                responseElem.style.opacity = '0';
+            }, 3000);
+            
+            // Notify job list to refresh
+            document.dispatchEvent(new CustomEvent('jobCreated'));
             console.log('Success:', data);
         })
         .catch(error => {
-            document.getElementById('job-response').textContent = 'Error creating job.';
+            const responseElem = document.getElementById('job-response');
+            responseElem.textContent = 'Error creating job.';
+            responseElem.style.opacity = '1';
+            setTimeout(() => {
+                responseElem.style.transition = 'opacity 1s';
+                responseElem.style.opacity = '0';
+            }, 3000);
             console.error('Error:', error);
         });
     });
