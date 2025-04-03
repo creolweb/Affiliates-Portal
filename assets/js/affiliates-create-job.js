@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .then(data => {
             const responseElem = document.getElementById('job-response');
             responseElem.textContent = 'Job created successfully!';
+            responseElem.classList.add('text-success');
             // Reset opacity in case it has been faded before
             responseElem.style.opacity = '1';
 
@@ -47,6 +48,7 @@ document.addEventListener('DOMContentLoaded', function() {
         .catch(error => {
             const responseElem = document.getElementById('job-response');
             responseElem.textContent = 'Error creating job.';
+            responseElem.classList.add('text-danger');
             responseElem.style.opacity = '1';
             setTimeout(() => {
                 responseElem.style.transition = 'opacity 1s';
