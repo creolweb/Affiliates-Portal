@@ -59,10 +59,12 @@ document.addEventListener('DOMContentLoaded', function() {
         jobList.innerHTML = '';
         fetch(detailUrl, { cache: 'no-store' })
             .then(response => response.json())
-            .then(job => {
-                // In case the API returns an array, grab the first item.
-                if (Array.isArray(job)) {
-                    job = job[0];
+            .then(result => {
+                // If the API returns an array, find the job with the matching id.
+                let job = Array.isArray(result) ? result.find(j => j.id == jobId) : result;
+                if (!job) {
+                    jobList.innerHTML = '<p>Job not found.</p>';
+                    return;
                 }
                 const detailHTML = `
                     <div class="card mb-3">
@@ -71,7 +73,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="card-text">By: ${job.author.name}</p>
                             <p class="card-text">${job.content}</p>
                             <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
-                            <button href="#" class="btn btn-info back-button">Back</button>
+                            <button class="btn btn-info back-button">Back</button>
                         </div>
                     </div>
                 `;
