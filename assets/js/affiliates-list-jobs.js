@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             <p class="card-text">By: ${job.author.name}</p>
                             <p class="card-text">${job.content}</p>
                             <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
-                            <button class="btn btn-info back-button">Back</button>
+                            <button class="btn btn-secondary back-button">Back</button>
                         </div>
                     </div>
                 `;
@@ -86,7 +86,7 @@ function showEditForm(job) {
                     </div>
                     <div class="form-group">
                         <label for="edit-description">Job Description:</label>
-                        <textarea class="form-control" id="edit-description" name="job_description" style="height: 20vh;" required>${job.content}</textarea>
+                        <textarea class="form-control" id="edit-description" name="job_description" style="height: 20vh;" required>${job.job_description}</textarea>
                     </div>
                     <div class="form-group">
                         <label for="edit-contact">Contact:</label>
