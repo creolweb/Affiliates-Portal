@@ -73,90 +73,97 @@ document.addEventListener('DOMContentLoaded', function() {
             .catch(error => console.error('Error fetching job details:', error));
     }
 
-// Function to show the edit form, prepopulated with the current job data.
-function showEditForm(job) {
-    jobList.innerHTML = `
-        <div class="card mb-3">
-            <div class="card-block">
-                <h5>Edit Job</h5>
-                <form id="edit-job-form">
-                    <div class="form-group">
-                        <label for="edit-title">Job Title:</label>
-                        <input type="text" class="form-control" id="edit-title" name="title" value="${job.title}" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-description">Job Description:</label>
-                        <textarea class="form-control" id="edit-description" name="job_description" style="height: 20vh;" required>${job.job_description}</textarea>
-                    </div>
-                    <div class="form-group">
-                        <label for="edit-contact">Contact:</label>
-                        <input type="text" class="form-control" id="edit-contact" name="contact" value="${job.contact ? job.contact : ''}" required>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Save</button>
-                    <button type="button" class="btn btn-secondary cancel-edit">Cancel</button>
-                </form>
+    // Function to show the edit form, prepopulated with the current job data.
+    function showEditForm(job) {
+        jobList.innerHTML = `
+            <div class="card mb-3">
+                <div class="card-block">
+                    <h5>Edit Job</h5>
+                    <form id="edit-job-form">
+                        <div class="form-group">
+                            <label for="edit-title">Job Title:</label>
+                            <input type="text" class="form-control" id="edit-title" name="title" value="${job.title}" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-description">Job Description:</label>
+                            <textarea class="form-control" id="edit-description" name="job_description" style="height: 20vh;" required>${job.job_description}</textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="edit-contact">Contact:</label>
+                            <input type="text" class="form-control" id="edit-contact" name="contact" value="${job.contact ? job.contact : ''}" required>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary cancel-edit">Cancel</button>
+                    </form>
+                </div>
             </div>
-        </div>
-    `;
-    
-    const editForm = document.getElementById('edit-job-form');
-    
-    // Handle form submission
-    editForm.addEventListener('submit', function(e) {
-        e.preventDefault();
-        const formData = new FormData(editForm);
-        const data = {
-            title: formData.get('title'),
-            job_description: formData.get('job_description'),
-            contact: formData.get('contact')
-        };
-        fetch(`${affiliatesJobs.restUrl}/${job.id}`, {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-WP-Nonce': affiliatesJobs.nonce
-            },
-            credentials: 'include',
-            body: JSON.stringify(data)
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Job updated:', data);
+        `;
+        
+        const editForm = document.getElementById('edit-job-form');
+        
+        // Handle form submission
+        editForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+            const formData = new FormData(editForm);
+            const data = {
+                title: formData.get('title'),
+                job_description: formData.get('job_description'),
+                contact: formData.get('contact')
+            };
+            fetch(`${affiliatesJobs.restUrl}/${job.id}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-WP-Nonce': affiliatesJobs.nonce
+                },
+                credentials: 'include',
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Job updated:', data);
+                loadJobList();
+            })
+            .catch(error => console.error('Error updating job:', error));
+        });
+        
+        // Handle cancel action
+        document.querySelector('.cancel-edit').addEventListener('click', function() {
             loadJobList();
-        })
-        .catch(error => console.error('Error updating job:', error));
-    });
-    
-    // Handle cancel action
-    document.querySelector('.cancel-edit').addEventListener('click', function() {
-        loadJobList();
-    });
-}
+        });
+    }
 
-// New editJob() function that fetches the current job and then shows the edit form.
-function editJob(jobId) {
-    // Fetch the current job data
-    fetch(`${affiliatesJobs.restUrl}/${jobId}`, { cache: 'no-store' })
-        .then(response => response.json())
-        .then(job => {
-            // If the API returns a wrapped result or an array, get the correct details.
-            if (Array.isArray(job)) {
-                job = job.find(j => j.id == jobId);
-            }
-            if (!job) {
-                jobList.innerHTML = '<p>Job not found.</p>';
-                return;
-            }
-            showEditForm(job);
-        })
-        .catch(error => console.error('Error fetching job details for edit:', error));
-}
+    // New editJob() function that fetches the current job and then shows the edit form.
+    function editJob(jobId) {
+        // Fetch the current job data
+        fetch(`${affiliatesJobs.restUrl}/${jobId}`, { cache: 'no-store' })
+            .then(response => response.json())
+            .then(job => {
+                // If the API returns a wrapped result or an array, get the correct details.
+                if (Array.isArray(job)) {
+                    job = job.find(j => j.id == jobId);
+                }
+                if (!job) {
+                    jobList.innerHTML = '<p>Job not found.</p>';
+                    return;
+                }
+                showEditForm(job);
+            })
+            .catch(error => console.error('Error fetching job details for edit:', error));
+    }
 
-    // Function to send a delete request.
+    // New deleteJob function that shows the modal instead of using confirm()
     function deleteJob(jobId) {
-        if (!confirm('Are you sure you want to delete this job?')) {
-            return;
-        }
+        // Store jobId in the modal's dataset for later reference
+        const deleteModal = $('#deleteJobModal');
+        deleteModal.data('jobId', jobId);
+        deleteModal.modal('show');
+    }
+
+    // Attach click event to modal's confirm button once (if not already attached)
+    document.getElementById('confirm-delete-btn').addEventListener('click', function(){
+        const deleteModal = $('#deleteJobModal');
+        const jobId = deleteModal.data('jobId');
         fetch(`${affiliatesJobs.restUrl}/${jobId}`, {
             method: 'DELETE',
             headers: {
@@ -169,9 +176,10 @@ function editJob(jobId) {
         .then(data => {
             console.log('Job deleted:', data);
             loadJobList();
+            deleteModal.modal('hide');
         })
         .catch(error => console.error('Error deleting job:', error));
-    }
+    });
 
     jobList.addEventListener('click', function(event) {
         if (event.target.matches('.more-details-button')) {
