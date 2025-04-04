@@ -38,7 +38,7 @@ function affiliates_portal_login_shortcode( $atts ) {
                 $user = wp_signon( $creds, false );
                 
                 if ( is_wp_error( $user ) ) {
-                    $error = wp_strip_all_tags( $user->get_error_message() );
+                    $error = $user->get_error_message();
                 } else {
                     // Ensure cookies and current user are set.
                     wp_set_current_user( $user->ID );
