@@ -25,10 +25,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json().then(data => ({ data, totalPages }));
             })
             .then(({ data, totalPages }) => {
-                // If no jobs are returned, show the default message.
-                if (!data || data.length === 0) {
-                    jobList.innerHTML = '<p>No jobs currently posted.</p>';
-                    // Remove pagination if it exists.
+                // Check if the API returned a message instead of the jobs array
+                if (data.message) {
+                    jobList.innerHTML = '<p>You have no jobs currently posted.</p>';
                     const existingPagination = document.getElementById('pagination-nav');
                     if (existingPagination) {
                         existingPagination.remove();
