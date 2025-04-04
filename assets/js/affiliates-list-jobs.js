@@ -18,8 +18,12 @@ document.addEventListener('DOMContentLoaded', function() {
         jobList.innerHTML = '';
         const urlWithPagination = buildUrl(originalRestUrl, { page: currentPage, per_page: perPage });
         fetch(urlWithPagination, { cache: 'no-store' })
-            .then(response => response.json())
-            .then(data => {
+            .then(response => {
+                // Get total pages from header (WordPress REST API typically sends this header)
+                const totalPages = parseInt(response.headers.get('X-WP-TotalPages'), 10) || 1;
+                return response.json().then(data => ({ data, totalPages }));
+            })
+            .then(({ data, totalPages }) => {
                 const fragment = document.createDocumentFragment();
                 data.forEach(function(job) {
                     const maxChars = 300;
@@ -44,64 +48,82 @@ document.addEventListener('DOMContentLoaded', function() {
                     fragment.appendChild(temp.firstElementChild);
                 });
                 jobList.appendChild(fragment);
-                renderPagination(data.length);
+                renderPagination(totalPages);
             })
             .catch(error => console.error('Error fetching jobs:', error));
     }
 
-    // Render pagination controls based on results. If we got 5 jobs, assume there might be a next page.
-    function renderPagination(resultsCount) {
+    // New renderPagination function showing Prev, numbered links and Next.
+    function renderPagination(totalPages) {
         // Remove any existing pagination nav
         let paginationNav = document.getElementById('pagination-nav');
         if (paginationNav) {
             paginationNav.remove();
         }
         
-        // Create new pagination nav and ul elements
+        // If there's only one page, no need to render pagination.
+        if (totalPages <= 1) return;
+        
         paginationNav = document.createElement('nav');
         paginationNav.id = 'pagination-nav';
         const ul = document.createElement('ul');
         ul.className = 'pagination';
-        
-        // Previous button (only show if currentPage > 1)
+
+        // Prev button
+        const prevLi = document.createElement('li');
+        prevLi.className = 'page-item' + (currentPage === 1 ? ' disabled' : '');
+        const prevLink = document.createElement('a');
+        prevLink.className = 'page-link';
+        prevLink.href = '#';
+        prevLink.textContent = 'Prev';
         if (currentPage > 1) {
-            const prevLi = document.createElement('li');
-            prevLi.className = 'page-item';
-            const prevLink = document.createElement('a');
-            prevLink.className = 'page-link';
-            prevLink.href = '#';
-            prevLink.textContent = 'Previous';
             prevLink.addEventListener('click', function(event) {
                 event.preventDefault();
                 currentPage--;
                 loadJobList();
             });
-            prevLi.appendChild(prevLink);
-            ul.appendChild(prevLi);
         }
-        
-        // Next button (if results count equals perPage, assume more pages)
-        if (resultsCount === perPage) {
-            const nextLi = document.createElement('li');
-            nextLi.className = 'page-item';
-            const nextLink = document.createElement('a');
-            nextLink.className = 'page-link';
-            nextLink.href = '#';
-            nextLink.textContent = 'Next';
+        prevLi.appendChild(prevLink);
+        ul.appendChild(prevLi);
+
+        // Number links
+        for (let i = 1; i <= totalPages; i++) {
+            const li = document.createElement('li');
+            li.className = 'page-item' + (i === currentPage ? ' active' : '');
+            const link = document.createElement('a');
+            link.className = 'page-link';
+            link.href = '#';
+            link.textContent = i;
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                currentPage = i;
+                loadJobList();
+            });
+            li.appendChild(link);
+            ul.appendChild(li);
+        }
+
+        // Next button
+        const nextLi = document.createElement('li');
+        nextLi.className = 'page-item' + (currentPage === totalPages ? ' disabled' : '');
+        const nextLink = document.createElement('a');
+        nextLink.className = 'page-link';
+        nextLink.href = '#';
+        nextLink.textContent = 'Next';
+        if (currentPage < totalPages) {
             nextLink.addEventListener('click', function(event) {
                 event.preventDefault();
                 currentPage++;
                 loadJobList();
             });
-            nextLi.appendChild(nextLink);
-            ul.appendChild(nextLi);
         }
-        
+        nextLi.appendChild(nextLink);
+        ul.appendChild(nextLi);
+
         paginationNav.appendChild(ul);
         // Append the pagination nav below the jobList container.
         jobList.parentNode.appendChild(paginationNav);
     }
-
 
     function fetchJobDetails(jobId) {
         const detailUrl = buildUrl(affiliatesJobs.restUrl, 'id', jobId);
@@ -132,6 +154,12 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Function to show the edit form, prepopulated with the current job data.
     function showEditForm(job) {
+        // Remove pagination if it exists
+        let paginationNav = document.getElementById('pagination-nav');
+        if (paginationNav) {
+            paginationNav.remove();
+        }
+
         jobList.innerHTML = `
             <div class="card mb-3">
                 <div class="card-block">
