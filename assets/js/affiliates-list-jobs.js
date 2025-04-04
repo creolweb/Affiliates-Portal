@@ -36,16 +36,16 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="card-text">By: ${job.author.name}</p>
                                 <p class="card-text">${truncatedContent}</p>
                                 <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
-                                <div class="row">
-                                    <div class="col">
-                                        <button class="btn btn-secondary more-details-button" data-id="${job.id}">More Details</button>
+                                <div class="row justify-content-between">
+                                    <div class="col-md-3 py-2">
+                                        <button class="btn btn-secondary more-details-button w-100" data-id="${job.id}">More Details</button>
                                     </div>
                                 ${ isSelf ? `
-                                    <div class="col">
-                                        <button class="btn btn-primary edit-button" data-id="${job.id}">Edit</button>
+                                    <div class="col-md-3 py-2">
+                                        <button class="btn btn-primary edit-button w-100" data-id="${job.id}">Edit</button>
                                     </div>
-                                    <div class="col">
-                                        <button class="btn btn-danger delete-button" data-id="${job.id}">Delete</button>
+                                    <div class="col-md-3 py-2">
+                                        <button class="btn btn-danger delete-button w-100" data-id="${job.id}">Delete</button>
                                     </div>
                                 ` : '' }
                                 </div>
