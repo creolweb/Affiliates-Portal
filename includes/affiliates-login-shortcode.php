@@ -8,8 +8,7 @@ function affiliates_login_enqueue_assets() {
         true
     );
     wp_localize_script( 'affiliates-login', 'affiliatesLogin', [
-        'ajaxUrl' => admin_url( 'admin-ajax.php' ),
-        'nonce'   => wp_create_nonce( 'affiliates_portal_login' ),
+        'ajaxUrl' => admin_url( 'admin-ajax.php' )
     ]);
 }
 add_action( 'wp_enqueue_scripts', 'affiliates_login_enqueue_assets' );
