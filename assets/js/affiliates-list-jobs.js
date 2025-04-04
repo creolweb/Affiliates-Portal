@@ -140,14 +140,16 @@ document.addEventListener('DOMContentLoaded', function() {
         if (paginationElement) {
             paginationElement.remove();
         }
-
-        const detailUrl = buildUrl(affiliatesJobs.restUrl, 'id', jobId);
+    
+        // Use the single job endpoint
+        const detailUrl = `${affiliatesJobs.restUrl}/${jobId}`;
+    
         jobList.innerHTML = '';
         fetch(detailUrl, { cache: 'no-store' })
             .then(response => response.json())
             .then(result => {
-                let job = Array.isArray(result) ? result.find(j => j.id == jobId) : result;
-                if (!job) {
+                let job = result;
+                if (!job || !job.id) {
                     jobList.innerHTML = '<p>Job not found.</p>';
                     return;
                 }
@@ -156,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="card-block">
                             <h5 class="card-title">${job.title}</h5>
                             <p class="card-text">By: ${job.author.name}</p>
-                            <p class="card-text">${job.content}</p>
+                            <p class="card-text">${job.job_description ? job.job_description : job.content}</p>
                             <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
                             <button class="btn btn-secondary back-button">Back</button>
                         </div>
