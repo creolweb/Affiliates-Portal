@@ -51,39 +51,55 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Render pagination controls based on results. If we got 5 jobs, assume there might be a next page.
     function renderPagination(resultsCount) {
-        // Remove any existing pagination controls
-        let paginationDiv = document.getElementById('pagination-controls');
-        if (paginationDiv) {
-            paginationDiv.remove();
+        // Remove any existing pagination nav
+        let paginationNav = document.getElementById('pagination-nav');
+        if (paginationNav) {
+            paginationNav.remove();
         }
-        paginationDiv = document.createElement('div');
-        paginationDiv.id = 'pagination-controls';
-        paginationDiv.className = 'mt-3';
-
+        
+        // Create new pagination nav and ul elements
+        paginationNav = document.createElement('nav');
+        paginationNav.id = 'pagination-nav';
+        const ul = document.createElement('ul');
+        ul.className = 'pagination';
+        
+        // Previous button (only show if currentPage > 1)
         if (currentPage > 1) {
-            const prevBtn = document.createElement('button');
-            prevBtn.className = 'btn btn-secondary mr-2';
-            prevBtn.textContent = 'Previous';
-            prevBtn.addEventListener('click', function() {
+            const prevLi = document.createElement('li');
+            prevLi.className = 'page-item';
+            const prevLink = document.createElement('a');
+            prevLink.className = 'page-link';
+            prevLink.href = '#';
+            prevLink.textContent = 'Previous';
+            prevLink.addEventListener('click', function(event) {
+                event.preventDefault();
                 currentPage--;
                 loadJobList();
             });
-            paginationDiv.appendChild(prevBtn);
+            prevLi.appendChild(prevLink);
+            ul.appendChild(prevLi);
         }
-
-        // If number of results equals perPage, show Next button.
+        
+        // Next button (if results count equals perPage, assume more pages)
         if (resultsCount === perPage) {
-            const nextBtn = document.createElement('button');
-            nextBtn.className = 'btn btn-secondary';
-            nextBtn.textContent = 'Next';
-            nextBtn.addEventListener('click', function() {
+            const nextLi = document.createElement('li');
+            nextLi.className = 'page-item';
+            const nextLink = document.createElement('a');
+            nextLink.className = 'page-link';
+            nextLink.href = '#';
+            nextLink.textContent = 'Next';
+            nextLink.addEventListener('click', function(event) {
+                event.preventDefault();
                 currentPage++;
                 loadJobList();
             });
-            paginationDiv.appendChild(nextBtn);
+            nextLi.appendChild(nextLink);
+            ul.appendChild(nextLi);
         }
-
-        jobList.parentNode.appendChild(paginationDiv);
+        
+        paginationNav.appendChild(ul);
+        // Append the pagination nav below the jobList container.
+        jobList.parentNode.appendChild(paginationNav);
     }
 
 
