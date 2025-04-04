@@ -48,6 +48,9 @@ function affiliates_portal_login_shortcode( $atts ) {
                 }
             }
         }
+        // Redirect to the same page after processing POST.
+        wp_safe_redirect( home_url( '/portal-login' ) );
+        exit;
     }
     
     // Fetch all users with the 'affiliate' role.
