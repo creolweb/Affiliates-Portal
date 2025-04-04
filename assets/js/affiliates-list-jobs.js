@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const jobList = document.getElementById('affiliates-job-list');
     let currentPage = 1;
     const perPage = 5;
+    const paginationNav = document.getElementById('pagination-nav');
 
     function buildUrl(url, params) {
         const query = Object.keys(params)
@@ -67,7 +68,7 @@ document.addEventListener('DOMContentLoaded', function() {
         paginationNav = document.createElement('nav');
         paginationNav.id = 'pagination-nav';
         const ul = document.createElement('ul');
-        ul.className = 'pagination';
+        ul.className = 'pagination pagination-lg';
 
         // Prev button
         const prevLi = document.createElement('li');
@@ -126,6 +127,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function fetchJobDetails(jobId) {
+        // Remove pagination if it exists
+        if (paginationNav) {
+            // Hide the pagination
+            paginationNav.style.display = 'none';
+        }
+
         const detailUrl = buildUrl(affiliatesJobs.restUrl, 'id', jobId);
         jobList.innerHTML = '';
         fetch(detailUrl, { cache: 'no-store' })
@@ -150,6 +157,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 jobList.innerHTML = detailHTML;
             })
             .catch(error => console.error('Error fetching job details:', error));
+        // Remove pagination if it exists
+        if (paginationNav) {
+            // Display the pagination
+            paginationNav.style.display = 'block';
+        }
     }
 
     // Function to show the edit form, prepopulated with the current job data.
