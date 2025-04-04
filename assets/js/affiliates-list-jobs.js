@@ -157,7 +157,8 @@ document.addEventListener('DOMContentLoaded', function() {
         // Remove pagination if it exists
         let paginationNav = document.getElementById('pagination-nav');
         if (paginationNav) {
-            paginationNav.remove();
+            // Hide the pagination
+            paginationNav.style.display = 'none';
         }
 
         jobList.innerHTML = `
@@ -208,6 +209,12 @@ document.addEventListener('DOMContentLoaded', function() {
             .then(data => {
                 console.log('Job updated:', data);
                 loadJobList();
+                // Remove pagination if it exists
+                let paginationNav = document.getElementById('pagination-nav');
+                if (paginationNav) {
+                    // Display the pagination
+                    paginationNav.style.display = 'block';
+                }
             })
             .catch(error => console.error('Error updating job:', error));
         });
