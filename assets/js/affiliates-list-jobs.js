@@ -33,9 +33,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <div class="card mb-3">
                             <div class="card-block">
                                 <h5 class="card-title">${job.title}</h5>
-                                <p class="card-text">By: ${job.author.name}</p>
+                                <p class="card-text">Posted By: ${job.author.name}</p>
+                                <p class="card-text"><span class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</span></p>
                                 <p class="card-text">${truncatedContent}</p>
-                                <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
                                 <div class="row justify-content-between">
                                     <div class="col-md-3 py-2">
                                         <button class="btn btn-secondary more-details-button w-100" data-id="${job.id}">More Details</button>
@@ -157,9 +157,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     <div class="card mb-3">
                         <div class="card-block">
                             <h5 class="card-title">${job.title}</h5>
-                            <p class="card-text">By: ${job.author.name}</p>
+                            <p class="card-text">Posted By: ${job.author}</p>
+                            <p class="card-text"><span class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</span></p>
                             <p class="card-text">${job.job_description ? job.job_description : job.content}</p>
-                            <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
                             <button class="btn btn-secondary back-button">Back</button>
                         </div>
                     </div>
