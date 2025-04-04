@@ -135,10 +135,10 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function fetchJobDetails(jobId) {
-        // Remove pagination if it exists
-        if (paginationNav) {
-            // Hide the pagination
-            paginationNav.style.display = 'none';
+        // Remove pagination from the DOM if it exists
+        const paginationElement = document.getElementById('pagination-nav');
+        if (paginationElement) {
+            paginationElement.remove();
         }
 
         const detailUrl = buildUrl(affiliatesJobs.restUrl, 'id', jobId);
