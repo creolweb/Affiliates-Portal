@@ -25,6 +25,17 @@ document.addEventListener('DOMContentLoaded', function() {
                 return response.json().then(data => ({ data, totalPages }));
             })
             .then(({ data, totalPages }) => {
+                // If no jobs are returned, show the default message.
+                if (!data || data.length === 0) {
+                    jobList.innerHTML = '<p>No jobs currently posted.</p>';
+                    // Remove pagination if it exists.
+                    const existingPagination = document.getElementById('pagination-nav');
+                    if (existingPagination) {
+                        existingPagination.remove();
+                    }
+                    return;
+                }
+                
                 const fragment = document.createDocumentFragment();
                 data.forEach(function(job) {
                     const maxChars = 300;
