@@ -28,6 +28,12 @@ add_action( 'wp_enqueue_scripts', 'affiliates_list_jobs_enqueue_assets' );
 
 // Render the jobs list shortcode.
 function affiliates_list_jobs_widget( $atts ) {
+    // Redirect if not logged in
+    if ( ! is_user_logged_in() ) {
+        wp_safe_redirect( home_url( '/portal-login' ) );
+        exit;
+    }
+
     // Process shortcode attributes.
     $atts   = shortcode_atts( [ 'self' => false ], $atts, 'affiliates_portal_list_jobs' );
     $is_self = filter_var( $atts['self'], FILTER_VALIDATE_BOOLEAN );
