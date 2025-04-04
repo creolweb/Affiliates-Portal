@@ -1,4 +1,4 @@
-<div class="container w-50">
+<div class="container" style="width:50%; min-width: 300px;">
     <div class="row justify-content-center">
             <div class="col-md-12 ">
                 <div class="row justify-content-center">
