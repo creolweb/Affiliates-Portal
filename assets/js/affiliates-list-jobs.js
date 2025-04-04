@@ -157,11 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 jobList.innerHTML = detailHTML;
             })
             .catch(error => console.error('Error fetching job details:', error));
-        // Remove pagination if it exists
-        if (paginationNav) {
-            // Display the pagination
-            paginationNav.style.display = 'block';
-        }
     }
 
     // Function to show the edit form, prepopulated with the current job data.
