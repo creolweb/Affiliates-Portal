@@ -42,6 +42,8 @@
                 <input class="mb-2 w-100 btn btn-primary" type="submit" value="Login"/>
             </div>
         </div>
+        <!-- Important for mapping the error message properly -->
+        <input type="hidden" name="action" value="affiliates_portal_ajax_login">
     </form>
     <!-- Error message container -->
     <div id="login-error" class="mt-3"></div>
