@@ -36,11 +36,19 @@ document.addEventListener('DOMContentLoaded', function() {
                                 <p class="card-text">By: ${job.author.name}</p>
                                 <p class="card-text">${truncatedContent}</p>
                                 <p class="card-text"><small class="text-muted">Contact: ${job.contact ? job.contact : 'N/A'}</small></p>
-                                <button class="btn btn-secondary more-details-button" data-id="${job.id}">More Details</button>
+                                <div class="row">
+                                    <div class="col">
+                                        <button class="btn btn-secondary more-details-button" data-id="${job.id}">More Details</button>
+                                    </div>
                                 ${ isSelf ? `
-                                    <button class="btn btn-primary edit-button" data-id="${job.id}">Edit</button>
-                                    <button class="btn btn-danger delete-button" data-id="${job.id}">Delete</button>
+                                    <div class="col">
+                                        <button class="btn btn-primary edit-button" data-id="${job.id}">Edit</button>
+                                    </div>
+                                    <div class="col">
+                                        <button class="btn btn-danger delete-button" data-id="${job.id}">Delete</button>
+                                    </div>
                                 ` : '' }
+                                </div>
                             </div>
                         </div>
                     `;
@@ -68,7 +76,7 @@ document.addEventListener('DOMContentLoaded', function() {
         paginationNav = document.createElement('nav');
         paginationNav.id = 'pagination-nav';
         const ul = document.createElement('ul');
-        ul.className = 'pagination pagination-lg';
+        ul.className = 'pagination justify-content-center';
 
         // Prev button
         const prevLi = document.createElement('li');
@@ -157,11 +165,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 jobList.innerHTML = detailHTML;
             })
             .catch(error => console.error('Error fetching job details:', error));
-        // Remove pagination if it exists
-        if (paginationNav) {
-            // Display the pagination
-            paginationNav.style.display = 'block';
-        }
     }
 
     // Function to show the edit form, prepopulated with the current job data.
