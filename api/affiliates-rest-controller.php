@@ -56,8 +56,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
     // Eg: /api/affiliates/v1/jobs?user_ids=1,2,3 or /api/affiliates/v1/jobs?user_ids[]=1&user_ids[]=2&user_ids[]=3
     public function get_jobs( $request ) {
         $user_ids_param = $request->get_param( 'user_ids' );
-    
-        $user_ids = [];
+        $user_ids = array();
     
         if ( is_array( $user_ids_param ) ) {
             $user_ids = array_map( 'intval', $user_ids_param );
@@ -69,28 +68,29 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
     
         $per_page = isset( $request['per_page'] ) ? intval( $request['per_page'] ) : 5;
         $page     = isset( $request['page'] ) ? max( 1, intval( $request['page'] ) ) : 1;
-
+    
         $args = array(
             'post_type'      => 'job',
             'post_status'    => 'publish',
             'posts_per_page' => $per_page,
-            'offset'         => ( $page - 1 ) * $per_page,
+            'paged'          => $page,
         );
     
         if ( ! empty( $user_ids ) ) {
             $args['author__in'] = $user_ids;
         }
     
-        $jobs = get_posts( $args );
-    
-        if ( empty( $jobs ) ) {
+        $query = new WP_Query( $args );
+        if ( ! $query->have_posts() ) {
             return rest_ensure_response( array( 'message' => 'No jobs found' ) );
         }
+    
+        $jobs = $query->posts;
     
         $data = array_map( function( $job ) {
             $author_id = $job->post_author;
             $author = get_user_by( 'id', $author_id );
-    
+        
             return [
                 'id'      => $job->ID,
                 'title'   => $job->post_title,
@@ -99,14 +99,16 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
                 'author'  => [
                     'id'   => $author_id,
                     'name' => $author->display_name,
-                    // Optional: include custom user meta
-                    // 'company_slug' => get_user_meta( $author_id, 'company_slug', true ),
-                    // 'company_logo' => get_user_meta( $author_id, 'company_logo', true ),
                 ],
             ];
         }, $jobs );
-    
-        return rest_ensure_response( $data );
+        
+        $response = rest_ensure_response( $data );
+        // Add headers to expose pagination info
+        $response->header( 'X-WP-Total', $query->found_posts );
+        $response->header( 'X-WP-TotalPages', $query->max_num_pages );
+        
+        return $response;
     }
 
 
