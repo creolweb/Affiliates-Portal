@@ -19,16 +19,15 @@ function affiliates_portal_login_shortcode( $atts ) {
     
     // Process the form submission using a nonce to verify and secure the request
     if ( isset( $_POST['affiliates_login_nonce'] ) && wp_verify_nonce( $_POST['affiliates_login_nonce'], 'affiliates_portal_login' ) ) {
-        
         $affiliate_login = sanitize_text_field( $_POST['affiliate_login'] );
-        $password = $_POST['affiliates_password']; // let wp_signon() handle password sanitization
-        
+        $password = $_POST['affiliates_password'];
+    
         if ( empty( $affiliate_login ) ) {
-            $error = 'Please select a company from the dropdown.';
+            $_SESSION['login_error'] = 'Please select a company from the dropdown.';
         } else {
             $user = get_user_by( 'login', $affiliate_login );
             if ( ! $user ) {
-                $error = 'User not found.';
+                $_SESSION['login_error'] = 'User not found.';
             } else {
                 $creds = array(
                     'user_login'    => $user->user_login,
@@ -36,19 +35,22 @@ function affiliates_portal_login_shortcode( $atts ) {
                     'remember'      => true,
                 );
                 $user = wp_signon( $creds, false );
-                
                 if ( is_wp_error( $user ) ) {
-                    $error = wp_strip_all_tags( $user->get_error_message() );
+                    $_SESSION['login_error'] = wp_strip_all_tags( $user->get_error_message() );
                 } else {
-                    // Ensure cookies and current user are set.
                     wp_set_current_user( $user->ID );
                     wp_set_auth_cookie( $user->ID, true );
                     do_action( 'wp_login', $user->user_login, $user );
+                    // Clear any error and redirect after successful login.
+                    unset( $_SESSION['login_error'] );
                     wp_safe_redirect( home_url() );
                     exit;
                 }
             }
         }
+        // Redirect to the same page after processing POST.
+        wp_safe_redirect( home_url( '/portal-login' ) );
+        exit;
     }
     
     // Fetch all users with the 'affiliate' role.
