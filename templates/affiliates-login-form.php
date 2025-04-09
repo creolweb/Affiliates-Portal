@@ -2,7 +2,7 @@
     <div class="row justify-content-center">
             <div class="col-md-12 ">
                 <div class="row justify-content-center">
-                    <img class="w-50" src="https://creol.ucf.edu/wp-content/uploads/sites/2/2024/10/CREOL-Logo-2024-e1744227372155.png" alt="CREOL Logo" class="img-fluid"/>
+                    <img class="w-50" src="https://creol.ucf.edu/wp-content/uploads/sites/2/2024/10/CREOL-Logo-2024-e1744228032859.png" alt="CREOL Logo" class="img-fluid"/>
                 </div>
             </div>
         </div>
