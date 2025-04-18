@@ -19,6 +19,11 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
                     'type'        => 'mixed', // Accept either string or array
                     'sanitize_callback' => null,
                 ),
+                'search' => array(
+                    'description' => 'Search term to filter jobs by title or content.',
+                    'type'        => 'string',
+                    'sanitize_callback' => 'sanitize_text_field',
+                ),
             ),
         ) );
 
@@ -57,6 +62,7 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
     public function get_jobs( $request ) {
         $user_ids_param = $request->get_param( 'user_ids' );
         $user_ids = array();
+        $search = $request->get_param( 'search' );
     
         if ( is_array( $user_ids_param ) ) {
             $user_ids = array_map( 'intval', $user_ids_param );
@@ -76,8 +82,14 @@ class Affiliates_REST_Controller extends WP_REST_Controller {
             'paged'          => $page,
         );
     
+        // Add user IDs to the query if present
         if ( ! empty( $user_ids ) ) {
             $args['author__in'] = $user_ids;
+        }
+
+        // Add search term to the query if present
+        if ( ! empty( $search ) ) {
+            $args['s'] = sanitize_text_field( $search );
         }
     
         $query = new WP_Query( $args );
